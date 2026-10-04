@@ -17,6 +17,13 @@ Original prompt: 用新安装的游戏开发技能重做「太空金币冒险」
 - 手感：创伤值震屏（可调强/弱/关）、受伤卡帧 0.13s、受伤红色暗角（可关闪光）、飞艇弹簧挤压拉伸、金币弹出+自旋+磁吸+飞向计分板、飘字、粒子池（700 个，不分配）
 - 音频：沿用羽毛球版的 iOS 解锁方案（touchend/click/pointerdown/keydown 里 audioUnlock，处理 'interrupted'，卡住 600ms 后下次点按重建）；后台/pagehide/blur → 暂停 + 静音 + 停音乐 + suspend + audioSession='auto'；音序器在隐藏时不排音符；三首合成 BGM（登机口/航行/班主任）
 
+### 验证记录（2026-10-04）
+- feat.py：Chromium + WebKit × 竖屏/横屏触屏，35 项全部 PASS（弹窗 ✕/Esc/背景关闭、拖动/键盘、道具、护盾、受伤、暂停/继续、设置叠在暂停上、visibilitychange/blur/pagehide、存档、静音持久化、无控制台错误）
+- audio.py（模拟 navigator.audioSession）：点按前不建 AudioContext；点按 → 'playback'+running+音乐；隐藏 → 'auto'+suspended+无音乐、隐藏期间 0 个新振荡器、隐藏时点按无效；回前台仍静音暂停直到点「继续冒险」
+- 性能：Chromium 无节流全程 60fps，每帧 JS+绘制 ≤1ms（金币雨最忙时）；4× CPU 节流下 2–5ms。WebKit 无头（Linux 软件合成）40–60fps——真机 Safari 走 GPU
+- 机器人（play.py，贪心、贴着可移动区域顶部）满分局 1400–1800；会在 0–3 颗心之间波动，人类玩家预计 300–1000 → 奖牌门槛 200/500/900
+- 飞艇可移动区域限制在 HUD 以下 24% 之后（避免挡住 HUD、也避免顶到刚生成的作业本）
+
 ## TODO / 建议
 - 真机 iPhone 确认：静音键开时有声、来电/切 App 后回来点「继续冒险」才恢复
 - 可考虑：更多飞艇皮肤（用最高分解锁）、每日挑战种子
