@@ -1,11 +1,280 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10112c"><meta name="description" content="选择果果飞艇或点点飞艇，60秒收集金币，躲开作业本！"><title>太空避险 · 金币大冒险</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="style.css?v=3"></head><body>
-<div class="app"><header><div class="logo"><span class="logo-icon">✦</span><div>太空避险<small>SPACE ADVENTURE</small></div></div><span class="top-tag">金币大冒险</span></header>
-<main><div class="game-heading"><div><p class="eyebrow">小小飞行员，准备出发！</p><h1>金币归你，作业本躲开。</h1></div><div class="mission"><span>任务时长</span><strong>60 <small>秒</small></strong></div></div>
-<section class="arena" aria-label="太空金币游戏"><div class="hud"><div class="hud-box"><span class="hud-label">🪙 金币</span><strong id="score">0</strong></div><div class="timer-box"><span class="hud-label">剩余时间</span><strong><b id="time">60</b><small>秒</small></strong></div><div class="life-box"><span class="hud-label">飞船能量</span><strong id="lives" aria-label="3颗爱心">♥ ♥ ♥</strong></div><button id="sound" class="pause sound" aria-label="关闭音乐和音效" aria-pressed="true">♫</button><button id="pause" class="pause" aria-label="暂停游戏" disabled>Ⅱ</button></div>
-<div class="playfield" id="field"><canvas id="canvas" tabindex="0" aria-label="游戏画面。电脑用方向键或 WASD 移动，手机在画面里拖动。"></canvas><div class="corner-label">SECTOR 01 / COIN ORBIT</div><div id="hit-flash" class="hit-flash"></div>
-<div class="overlay" id="start-screen"><div class="dialog start-dialog"><span class="badge">✦ 选择你的飞艇 ✦</span><h2>今天，谁来当船长？</h2><p class="intro">60 秒收金币，最后 15 秒挑战「生气的班主任」！</p><div class="characters"><button class="character selected guoguo" data-ship="guoguo" aria-pressed="true"><span class="chosen">已选择</span><span class="ship-emoji">🚀</span><strong>果果飞艇</strong><span class="ship-desc">每 10 金币召唤一架僚机</span><span class="swatches"><i></i><i></i><i></i></span></button><button class="character diandian" data-ship="diandian" aria-pressed="false"><span class="chosen">已选择</span><span class="ship-emoji">🛸</span><strong>点点飞艇</strong><span class="ship-desc">每 5 金币发射一次激光</span><span class="swatches"><i></i><i></i><i></i></span></button></div><button id="start" class="launch">出发，收金币！ <span>✦</span></button><p class="equal">僚机收金币、挡作业本 · 激光收金币、烧作业本</p></div></div>
-<div class="overlay" id="pause-screen" hidden><div class="dialog small-dialog"><span class="large-symbol">☾</span><h2>休息一下，宇宙等你</h2><p>计时已暂停，准备好再继续。</p><button id="resume" class="launch">继续冒险</button><button id="restart-paused" class="secondary">重新选飞艇</button></div></div>
-<div class="overlay" id="end-screen" hidden><div class="dialog small-dialog"><span id="result-icon" class="large-symbol">🏆</span><span id="result-badge" class="badge">任务完成</span><h2 id="result-title">金币满载，返航成功！</h2><p id="result-description"></p><div class="result-score"><span>本次收集</span><strong>🪙 <b id="final-score">0</b></strong><span>枚金币</span></div><button id="again" class="launch">再飞一次</button><button id="choose" class="secondary">换一艘飞艇</button></div></div>
-<div id="floating-message" aria-live="polite"></div></div>
-<div class="skill-bar"><span id="skill-label">僚机护航</span><div class="skill-track"><i id="skill-fill"></i></div><span id="skill-progress">0 / 10</span><span id="difficulty">难度 1 / 4</span></div><div class="game-bottom"><span id="pilot-label">🚀 果果飞艇 · 等待起飞</span><span>✧ 金币 +1　 📓 作业本 −1 ♥</span></div></section>
-<section class="tips"><div><span class="tip-icon">↔</span><p><strong>电脑操作</strong><span>方向键 / WASD 移动 · 空格暂停</span></p></div><div><span class="tip-icon">☝</span><p><strong>手机操作</strong><span>在游戏画面里拖动，飞艇跟着你飞</span></p></div><div><span class="tip-icon gold">✦</span><p><strong>班主任来了</strong><span>最后 15 秒 BOSS 登场 · 看准红圈及时躲开</span></p></div></section><footer>飞向星星，也别忘了写作业。 <span>✦</span></footer></main></div><script type="module" src="app.js?v=3"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2a1d6e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="太空金币冒险：选择果果号或点点号，60 秒收集金币，躲开作业本和生气的班主任！">
+<title>太空金币冒险</title>
+<link rel="icon" href="icon.svg">
+<style>
+:root{--ink:#2a1e5e;--night:#231a5c;--neb:#4b2f8f;--gold:#ffcb47;--gold2:#ff9f1c;--red:#ff5d6c;--gg:#ff9152;--dd:#35d9bb;--cream:#fff3d9;
+--sat:env(safe-area-inset-top,0px);--sar:env(safe-area-inset-right,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);
+font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--night);color:var(--cream);overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#safeProbe{position:fixed;inset:0;padding:var(--sat) var(--sar) var(--sab) var(--sal);visibility:hidden;pointer-events:none}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;left:0;right:0;top:0;z-index:5;display:none;grid-template-columns:auto 1fr auto;align-items:start;gap:8px;
+ padding:calc(var(--sat) + 10px) calc(var(--sar) + 12px) 0 calc(var(--sal) + 12px);pointer-events:none}
+body.m-play #hud{display:grid}
+.hud-l{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:84px}
+#lives{display:flex;gap:3px;height:26px;align-items:center}
+.heart{width:24px;height:22px;transition:transform .2s,opacity .3s,filter .3s}
+.heart.lost{opacity:.28;filter:grayscale(1);transform:scale(.8)}
+#phase{font-size:12px;font-weight:800;color:#e3dbff;background:#1b1350b8;border:1px solid #ffffff22;border-radius:9px;padding:3px 9px;white-space:nowrap}
+#phase.boss{color:#ffd3d8;background:#6e1631c8;border-color:#ff8c9877}
+.hud-c{justify-self:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+#scoreBox{display:flex;align-items:center;gap:8px;background:linear-gradient(#33268ae8,#21186ae8);border:2px solid #ffcb4780;border-radius:999px;padding:4px 16px 4px 5px;box-shadow:0 4px 0 #140d40}
+.coin-ico{width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff7c8 0,#ffd75e 38%,#f3a20f 75%,#c46f00 100%);box-shadow:inset 0 0 0 2px #e38f00,inset 0 0 0 5px #ffdf70}
+#score{font-size:26px;line-height:28px;font-weight:900;color:#ffe08a;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right;text-shadow:0 2px 0 #8a4300}
+#combo{display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(-4px);transition:opacity .18s,transform .18s;height:18px}
+#combo.on{opacity:1;transform:none}
+#comboN{font-weight:900;font-size:14px;color:#fff;text-shadow:0 1px 0 #0008;white-space:nowrap}
+#comboN em{font-style:normal;color:var(--gold);margin-left:2px}
+.cbar{width:64px;height:6px;background:#ffffff26;border-radius:3px;overflow:hidden}
+#comboFill{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ffcb47,#ff5d6c);transform-origin:left center}
+.hud-r{display:flex;gap:7px;justify-content:flex-end;align-items:center;pointer-events:auto}
+#timer{position:relative;width:44px;height:44px}
+#timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+#timer circle{fill:none;stroke-width:4.5}
+#timer .tbg{stroke:#ffffff22}
+#timerArc{stroke:#8ff0dc;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+#time{position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-size:16px;font-variant-numeric:tabular-nums}
+#timer.urgent #timerArc{stroke:#ff6b79}
+#timer.urgent #time{color:#ffb3ba}
+.ibtn{width:42px;height:42px;border-radius:13px;border:2px solid #ffffff38;background:#1b1350c0;display:grid;place-items:center;padding:0;flex:none}
+.ibtn svg{width:22px;height:22px;pointer-events:none}
+.ibtn .off{display:none}.ibtn.muted .on{display:none}.ibtn.muted .off{display:block}
+#skill,#powers{position:fixed;z-index:5;display:none;pointer-events:none}
+body.m-play #skill,body.m-play #powers{display:flex}
+#skill{left:calc(var(--sal) + 12px);bottom:calc(var(--sab) + 12px);align-items:center;gap:7px;background:#1b1350c0;border:1px solid #ffffff22;border-radius:12px;padding:5px 10px;font-size:13px;font-weight:800}
+.sbar{width:58px;height:7px;border-radius:4px;background:#ffffff22;overflow:hidden}
+#skillFill{display:block;height:100%;width:0;border-radius:4px;background:var(--acc,#ff9152);transition:width .2s}
+#skillTxt{font-variant-numeric:tabular-nums;color:#d8d0ff;font-size:12px}
+#powers{right:calc(var(--sar) + 12px);bottom:calc(var(--sab) + 12px);gap:6px}
+.pw{display:flex;align-items:center;gap:5px;background:#1b1350d0;border:1.5px solid var(--c);border-radius:12px;padding:4px 9px 4px 6px;font-size:13px;font-weight:900;color:#fff}
+.pw i{width:18px;height:18px;border-radius:50%;background:var(--c);display:grid;place-items:center;font-style:normal;font-size:11px;color:#1b1350}
+
+/* ---------- Title ---------- */
+.screen{position:fixed;inset:0;z-index:10;display:none;overflow:auto;
+ padding:calc(var(--sat) + 14px) calc(var(--sar) + 16px) calc(var(--sab) + 14px) calc(var(--sal) + 16px)}
+body.m-title #sTitle{display:flex}
+#sTitle{flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3.2vh,30px)}
+.brand{text-align:center}
+.kicker{margin:0 0 6px;font-size:clamp(14px,3.6vw,18px);font-weight:800;color:#d9ceff;letter-spacing:.08em}
+.kicker b{color:var(--gg)}.kicker i{font-style:normal;color:var(--dd)}
+.logo{margin:0;display:flex;justify-content:center;font-size:clamp(44px,12.4vw,96px);font-weight:900;line-height:1.05;white-space:nowrap}
+.logo span{display:inline-block;color:#ffd24f;margin:0 -.01em;
+ text-shadow:0 .03em 0 #ffb21f,0 .06em 0 #f08a12,0 .09em 0 #c4560c,0 .12em 0 #6a2c8f,0 .15em 0 #4b2f8f,0 .2em .25em #0d073580;
+ animation:drop .7s cubic-bezier(.3,1.7,.5,1) both,float 3.6s ease-in-out 1s infinite}
+.logo span:nth-child(odd){--r:-4deg}.logo span:nth-child(even){--r:3deg}
+.logo span:nth-child(1){animation-delay:.05s,1s}.logo span:nth-child(2){animation-delay:.12s,1.2s}.logo span:nth-child(3){animation-delay:.19s,1.4s}
+.logo span:nth-child(4){animation-delay:.26s,1.6s}.logo span:nth-child(5){animation-delay:.33s,1.8s}.logo span:nth-child(6){animation-delay:.4s,2s}
+@keyframes drop{from{transform:translateY(-1.2em) rotate(var(--r)) scale(.6);opacity:0}to{transform:rotate(var(--r));opacity:1}}
+@keyframes float{0%,100%{transform:rotate(var(--r)) translateY(0)}50%{transform:rotate(var(--r)) translateY(-.06em)}}
+.tag{margin:12px 0 0;font-size:clamp(13px,3.4vw,16px);color:#cfc4f5;font-weight:600}
+.passes{display:flex;gap:clamp(10px,3vw,20px);justify-content:center}
+.pass{--acc:#ff9152;position:relative;width:min(43vw,236px);border:0;padding:0;border-radius:16px;background:var(--cream);color:var(--ink);text-align:left;
+ box-shadow:0 6px 0 #120a3f88;transform:rotate(-2.5deg);transition:transform .3s cubic-bezier(.3,1.6,.5,1),box-shadow .2s;overflow:visible}
+.pass+.pass{transform:rotate(2.5deg)}
+.pass[data-ship=diandian]{--acc:#35d9bb}
+.pass.sel{transform:translateY(-8px) scale(1.04);box-shadow:0 10px 0 #120a3f88,0 0 0 4px var(--acc),0 0 30px color-mix(in srgb,var(--acc) 55%,transparent)}
+.pass-top{display:flex;justify-content:space-between;align-items:center;background:var(--acc);color:#2a1e5e;border-radius:16px 16px 0 0;padding:7px 12px;font-size:12px;font-weight:800}
+.pass-top b{font-size:14px;font-weight:900}
+.pass-art{display:block;width:100%;height:clamp(78px,15vh,118px)}
+.pass-body{padding:0 12px 10px}
+.pass-name{display:block;font-size:clamp(19px,5vw,24px);font-weight:900;line-height:1.1}
+.pass-skill{display:block;margin-top:4px;font-size:clamp(12px,3.1vw,13.5px);line-height:1.4;color:#5a4c8f;font-weight:600;min-height:2.8em}
+.pass-foot{position:relative;display:flex;justify-content:space-between;align-items:baseline;border-top:2px dashed #2a1e5e33;padding:8px 12px 10px;font-size:12px;font-weight:700;color:#6b5fa0}
+.pass-foot::before,.pass-foot::after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--night)}
+.pass-foot::before{left:-8px}.pass-foot::after{right:-8px}
+.pass-foot b{font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.stamp{position:absolute;right:10px;top:52px;padding:3px 9px;border:3px solid #e2364b;color:#e2364b;border-radius:8px;font-weight:900;font-size:16px;transform:rotate(-14deg) scale(1.6);opacity:0;transition:opacity .15s,transform .25s cubic-bezier(.3,1.6,.5,1);pointer-events:none;background:#fff3d9cc}
+.pass.sel .stamp{opacity:.92;transform:rotate(-14deg) scale(1)}
+.actions{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cta{min-width:min(78vw,300px);min-height:60px;border:0;border-radius:20px;background:linear-gradient(#ffe27a,#ffcb47 55%,#ffab26);color:#3b1600;font-size:clamp(21px,5.6vw,26px);font-weight:900;letter-spacing:.06em;
+ box-shadow:0 6px 0 #b4500c,0 10px 24px #0005;transition:transform .08s,box-shadow .08s}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 #b4500c,0 4px 10px #0005}
+.mini{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mini button,.mini a{min-height:40px;padding:0 14px;border-radius:12px;border:1.5px solid #ffffff40;background:#1b135088;font-size:14px;font-weight:700;color:#e9e3ff;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.mini .ibtn{width:40px;height:40px;padding:0;justify-content:center}
+@media (orientation:landscape) and (max-height:560px){
+ #sTitle{display:none;flex-direction:row;flex-wrap:wrap;align-content:center;column-gap:28px;row-gap:12px}
+ body.m-title #sTitle{display:flex}
+ .brand,.actions{flex:0 0 auto}
+ .left-col{display:flex;flex-direction:column;gap:14px;align-items:center}
+ .logo{font-size:clamp(38px,8.5vh,64px)}
+ .tag{margin-top:6px}
+ .pass{width:min(26vw,210px)}
+ .pass-art{height:clamp(60px,18vh,90px)}
+ .cta{min-height:52px;min-width:240px}
+}
+.left-col{display:contents}
+.brand{order:1}.passes{order:2}.actions{order:3}
+@media (orientation:landscape) and (max-height:560px){.left-col{display:flex}}
+
+/* ---------- Modals ---------- */
+.modal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:calc(var(--sat) + 12px) calc(var(--sar) + 12px) calc(var(--sab) + 12px) calc(var(--sal) + 12px)}
+.modal[hidden]{display:none}
+.backdrop{position:absolute;inset:0;background:#130b3dc4}
+.card{position:relative;width:min(92vw,400px);max-height:100%;overflow:auto;background:var(--cream);color:var(--ink);border-radius:22px;padding:22px 20px 18px;box-shadow:0 10px 0 #0a052899;animation:pop .32s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.7) translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.x{position:absolute;top:8px;right:8px;width:44px;height:44px;border-radius:13px;border:0;background:#2a1e5e14;color:var(--ink);font-size:20px;font-weight:900;display:grid;place-items:center}
+.card h2{margin:0 44px 12px 0;font-size:24px;font-weight:900;line-height:1.2}
+.card p{margin:0 0 10px;line-height:1.55;font-size:15px;color:#4a3d80}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:15px;font-size:18px;font-weight:900;margin-top:10px}
+.btn.primary{background:linear-gradient(#ffe27a,#ffcb47 55%,#ffab26);color:#3b1600;box-shadow:0 5px 0 #b4500c}
+.btn.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #b4500c}
+.btn.ghost{background:#2a1e5e14;color:var(--ink)}
+.row2{display:flex;gap:10px}.row2 .btn{flex:1}
+.help li{display:flex;gap:12px;align-items:center;margin:0 0 10px;font-size:15px;line-height:1.45;color:#3d3170}
+.help ul{list-style:none;margin:0 0 6px;padding:0}
+.help canvas{width:40px;height:40px;flex:none}
+.help b{color:var(--ink)}
+.set-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1.5px solid #2a1e5e14;font-weight:800;font-size:16px}
+.seg{display:flex;background:#2a1e5e14;border-radius:12px;padding:3px}
+.seg button{min-width:52px;min-height:38px;border:0;border-radius:10px;background:transparent;font-size:14px;font-weight:800;color:#5a4c8f}
+.seg button.on{background:var(--ink);color:var(--cream)}
+.rec{list-style:none;margin:0;padding:0;counter-reset:r}
+.rec li{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1.5px solid #2a1e5e14;font-weight:700;counter-increment:r}
+.rec li::before{content:counter(r);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2a1e5e14;font-size:13px}
+.rec li:nth-child(1)::before{background:#ffcb47}.rec li:nth-child(2)::before{background:#d7dcef}.rec li:nth-child(3)::before{background:#f0b58a}
+.rec .s{margin-left:auto;font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}
+.rec .d{font-size:12px;color:#7a6fae;font-weight:600}
+.bests{display:flex;gap:10px;margin-bottom:12px}
+.bests div{flex:1;border-radius:14px;padding:8px 10px;background:#2a1e5e10;font-weight:700;font-size:13px;color:#5a4c8f}
+.bests b{display:block;font-size:22px;color:var(--ink)}
+.empty{color:#7a6fae;text-align:center;padding:16px 0}
+/* result */
+.res{text-align:center}
+.res h2{margin:4px 30px 4px}
+.medal{width:86px;height:86px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-size:34px;font-weight:900;color:#5a2a00;
+ background:radial-gradient(circle at 35% 30%,#fff6c8,var(--m1) 45%,var(--m2));box-shadow:inset 0 0 0 5px #ffffff55,0 5px 0 var(--m3);animation:spinIn .8s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes spinIn{from{transform:rotateY(540deg) scale(.3)}to{transform:none}}
+.bigscore{font-size:52px;font-weight:900;line-height:1;margin:8px 0 2px;color:#e08300;text-shadow:0 3px 0 #ffe9a8;font-variant-numeric:tabular-nums}
+.newrec{display:inline-block;margin:4px 0 6px;padding:3px 12px;border:3px solid #e2364b;color:#e2364b;border-radius:9px;font-weight:900;transform:rotate(-6deg);animation:stampIn .4s .9s cubic-bezier(.3,1.8,.5,1) both}
+@keyframes stampIn{from{transform:rotate(-6deg) scale(2.6);opacity:0}to{transform:rotate(-6deg) scale(1);opacity:1}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+.stats div{background:#2a1e5e10;border-radius:12px;padding:7px 8px;font-size:12px;font-weight:700;color:#6b5fa0}
+.stats b{display:block;font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums}
+.sub{font-size:14px;color:#5a4c8f;font-weight:700;margin:0}
+@media (max-height:560px){.card{padding:16px 16px 14px}.medal{width:62px;height:62px;font-size:26px}.bigscore{font-size:40px}.stats{grid-template-columns:repeat(4,1fr)}.btn{min-height:46px;margin-top:8px}}
+@media (prefers-reduced-motion:reduce){.logo span{animation:none}.card,.medal,.newrec{animation:none}}
+</style>
+</head>
+<body class="m-title">
+<canvas id="cv" aria-label="游戏画面：电脑用方向键或 WASD 移动，手机按住画面任意位置拖动飞艇"></canvas>
+<div id="safeProbe"></div>
+
+<div id="hud">
+ <div class="hud-l"><div id="lives" aria-label="生命"></div><div id="phase">热身航段</div></div>
+ <div class="hud-c">
+  <div id="scoreBox"><i class="coin-ico"></i><b id="score">0</b></div>
+  <div id="combo"><span id="comboN"></span><span class="cbar"><i id="comboFill"></i></span></div>
+ </div>
+ <div class="hud-r">
+  <div id="timer"><svg viewBox="0 0 44 44"><circle class="tbg" cx="22" cy="22" r="19"/><circle id="timerArc" cx="22" cy="22" r="19" stroke-dasharray="119.38" stroke-dashoffset="0"/></svg><b id="time">60</b></div>
+  <button class="ibtn mute" id="bMute" aria-label="静音"><svg class="on" viewBox="0 0 24 24" fill="none" stroke="#fff3d9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#fff3d9"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="#fff3d9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#fff3d9"/><path d="M16 9l6 6M22 9l-6 6" stroke="#ff8c98"/></svg></button>
+  <button class="ibtn" id="bPause" aria-label="暂停"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4.2" height="14" rx="1.5" fill="#fff3d9"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.5" fill="#fff3d9"/></svg></button>
+ </div>
+</div>
+<div id="skill"><span id="skillName">僚机</span><span class="sbar"><i id="skillFill"></i></span><span id="skillTxt">0/10</span></div>
+<div id="powers"></div>
+
+<section class="screen" id="sTitle">
+ <div class="left-col">
+  <div class="brand">
+   <p class="kicker"><b>果果</b>和<i>点点</i>的星际任务</p>
+   <h1 class="logo" aria-label="太空金币冒险"><span>太</span><span>空</span><span>金</span><span>币</span><span>冒</span><span>险</span></h1>
+   <p class="tag">60 秒收满金币，躲开作业本，熬过班主任！</p>
+  </div>
+  <div class="actions">
+   <button class="cta" id="bStart">点火出发！</button>
+   <div class="mini">
+    <button id="bHelp">怎么玩</button><button id="bRecords">我的纪录</button><button id="bSettings">设置</button>
+    <button class="ibtn mute" id="bMute2" aria-label="静音"><svg class="on" viewBox="0 0 24 24" fill="none" stroke="#fff3d9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#fff3d9"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="#fff3d9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#fff3d9"/><path d="M16 9l6 6M22 9l-6 6" stroke="#ff8c98"/></svg></button>
+   </div>
+  </div>
+ </div>
+ <div class="passes" role="radiogroup" aria-label="选择飞艇">
+  <button class="pass" data-ship="guoguo" role="radio" aria-checked="false">
+   <span class="pass-top"><b>登机牌</b><span>航班 GG-60</span></span>
+   <canvas class="pass-art" data-ship="guoguo"></canvas>
+   <span class="pass-body"><span class="pass-name">果果号</span><span class="pass-skill">每收 10 枚金币<br>召唤一架僚机护航</span></span>
+   <span class="pass-foot"><span>最高分</span><b class="pass-best">0</b></span>
+   <span class="stamp">已登机</span>
+  </button>
+  <button class="pass" data-ship="diandian" role="radio" aria-checked="false">
+   <span class="pass-top"><b>登机牌</b><span>航班 DD-60</span></span>
+   <canvas class="pass-art" data-ship="diandian"></canvas>
+   <span class="pass-body"><span class="pass-name">点点号</span><span class="pass-skill">每收 5 枚金币<br>发射一道清屏激光</span></span>
+   <span class="pass-foot"><span>最高分</span><b class="pass-best">0</b></span>
+   <span class="stamp">已登机</span>
+  </button>
+ </div>
+</section>
+
+<div class="modal" id="mHelp" hidden><div class="backdrop" data-close></div><div class="card help" role="dialog" aria-modal="true" aria-labelledby="hHelp">
+ <button class="x" data-close aria-label="关闭">✕</button>
+ <h2 id="hHelp">怎么玩</h2>
+ <ul>
+  <li><canvas data-ico="move"></canvas><span><b>移动飞艇</b>：手机按住屏幕任意位置拖动；电脑用方向键 / WASD</span></li>
+  <li><canvas data-ico="coin"></canvas><span><b>收金币</b>：连续收集能叠连击，倍率最高 ×4；整排收齐有奖励</span></li>
+  <li><canvas data-ico="book"></canvas><span><b>躲作业本</b>：碰到会掉一颗心，3 颗心用完任务失败</span></li>
+  <li><canvas data-ico="magnet"></canvas><span><b>道具泡泡</b>：磁铁吸金币、护盾挡一次、×2 双倍、爱心回血</span></li>
+  <li><canvas data-ico="boss"></canvas><span><b>最后 15 秒</b>：生气的班主任登场，看准红圈及时躲开，撑到下课铃！</span></li>
+ </ul>
+ <button class="btn primary" data-close>知道了</button>
+</div></div>
+
+<div class="modal" id="mRecords" hidden><div class="backdrop" data-close></div><div class="card" role="dialog" aria-modal="true" aria-labelledby="hRec">
+ <button class="x" data-close aria-label="关闭">✕</button>
+ <h2 id="hRec">我的纪录</h2>
+ <div class="bests"><div>果果号最高<b id="bestG">0</b></div><div>点点号最高<b id="bestD">0</b></div></div>
+ <ol class="rec" id="recList"></ol>
+ <button class="btn ghost" data-close>关闭</button>
+</div></div>
+
+<div class="modal" id="mSettings" hidden><div class="backdrop" data-close></div><div class="card" role="dialog" aria-modal="true" aria-labelledby="hSet">
+ <button class="x" data-close aria-label="关闭">✕</button>
+ <h2 id="hSet">设置</h2>
+ <div class="set-row">声音<div class="seg" data-set="sound"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+ <div class="set-row">背景音乐<div class="seg" data-set="music"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+ <div class="set-row">屏幕震动<div class="seg" data-set="shake"><button data-v="2">强</button><button data-v="1">弱</button><button data-v="0">关</button></div></div>
+ <div class="set-row">受伤闪光<div class="seg" data-set="flash"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+ <button class="btn ghost" data-close>完成</button>
+</div></div>
+
+<div class="modal" id="mPause" hidden><div class="backdrop" data-close></div><div class="card" role="dialog" aria-modal="true" aria-labelledby="hPause">
+ <button class="x" data-close aria-label="继续">✕</button>
+ <h2 id="hPause">休息一下</h2>
+ <p id="pauseInfo">计时已暂停，宇宙在等你。</p>
+ <button class="btn primary" id="bResume">继续冒险</button>
+ <div class="row2"><button class="btn ghost" id="bPSet">设置</button><button class="btn ghost" id="bRestart">重新开始</button></div>
+ <button class="btn ghost" id="bHome">回到登机口</button>
+</div></div>
+
+<div class="modal" id="mOver" hidden><div class="backdrop" data-close></div><div class="card res" role="dialog" aria-modal="true" aria-labelledby="hOver">
+ <button class="x" data-close aria-label="关闭">✕</button>
+ <div class="medal" id="medal">金</div>
+ <h2 id="hOver">下课铃响，安全返航！</h2>
+ <p class="sub" id="overSub"></p>
+ <div class="bigscore" id="overScore">0</div>
+ <div id="newRec" class="newrec" hidden>新纪录！</div>
+ <div class="stats">
+  <div>金币<b id="stCoins">0</b></div><div>最高连击<b id="stCombo">0</b></div>
+  <div>整排收齐<b id="stSets">0</b></div><div id="stBonusL">生命奖励<b id="stBonus">0</b></div>
+ </div>
+ <div class="row2"><button class="btn ghost" id="bChange">换飞艇</button><button class="btn primary" id="bAgain">再飞一次</button></div>
+</div></div>
+
+<script src="game.js?v=202610042345"></script>
+</body>
+</html>
